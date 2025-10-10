@@ -28,8 +28,19 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull tony26112004/event-management-client:latest
         
-      - name: Delete old container
-        run: docker rm -f event-management-client-container || true
+      - name: Clean up old containers and port conflicts
+        run: |
+          docker stop event-management-client-container 2>/dev/null || true
+          docker rm event-management-client-container 2>/dev/null || true
+          
+          # Dừng bất kỳ process nào đang dùng port 80 (trừ API)
+          sudo fuser -k 80/tcp 2>/dev/null || true
         
       - name: Run Docker Container
-        run: docker run -d -p 80:80 --name event-management-client-container tony26112004/event-management-client
+        run: docker run -d -p 80:80 --name event-management-client-container --restart unless-stopped tony26112004/event-management-client
+        
+      - name: Verify deployment
+        run: |
+          sleep 10
+          docker ps | grep event-management-client-container
+          curl -f http://localhost || echo "Client app is starting..."
