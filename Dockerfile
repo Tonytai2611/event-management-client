@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 
 # Build arguments
 ARG VITE_API_BASE_URL=http://localhost:8800
@@ -37,7 +37,7 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copy built app
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Create nginx configuration
+# Create nginx configuration (REMOVE the COPY line)
 RUN echo 'server { \
     listen 80; \
     server_name _; \
