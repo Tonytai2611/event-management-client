@@ -65,8 +65,7 @@ jobs:
             VITE_API_BASE_URL=${{ secrets.EC2_API_URL }}
             VITE_CLIENT_URL=${{ secrets.EC2_CLIENT_URL }}
             VITE_NODE_ENV=production
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
 
   deploy:
     needs: build
