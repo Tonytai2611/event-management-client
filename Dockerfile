@@ -1,17 +1,47 @@
 # Build stage
-FROM node:24-alpine
+FROM node:18-alpine as build
+
+# Build arguments
+ARG VITE_API_BASE_URL=http://localhost:8800
+ARG VITE_CLIENT_URL=http://localhost:5173
+ARG VITE_NODE_ENV=production
+
+# Set environment variables
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_CLIENT_URL=$VITE_CLIENT_URL
+ENV VITE_NODE_ENV=$VITE_NODE_ENV
 
 WORKDIR /app
 
-# Copy package files first for better caching
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm ci --only=production
 
-# Copy only necessary source files
+# Copy source code
 COPY . .
 
-EXPOSE 5173
+# Build the application
+RUN npm run build
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Production stage
+FROM nginx:1.25-alpine
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Remove default nginx content
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy built app
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
