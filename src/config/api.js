@@ -24,7 +24,7 @@ export const testAPIConnection = async () => {
         });
         
         if (response.ok) {
-            console.log('✅ API connection successful.');
+            console.log('✅ API connection successful');
             return true;
         } else {
             console.warn('⚠️ API responded with status:', response.status);
