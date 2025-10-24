@@ -50,12 +50,12 @@ const AdminDashboard = () => {
     }, []);
 
     const fetchDashboardStats = async (forceRefresh = false) => {
-        // Try to get cached data first
+        
         const cachedData = localStorage.getItem('dashboardStats');
         const cacheTimestamp = localStorage.getItem('dashboardStatsTimestamp');
         const ONE_HOUR = 60 * 60 * 1000; // 1 hour in milliseconds
 
-        // Use cached data if it exists, is not expired, and force refresh is not requested
+        
         if (
             cachedData &&
             cacheTimestamp &&
@@ -63,7 +63,7 @@ const AdminDashboard = () => {
             !forceRefresh
         ) {
             setStats(JSON.parse(cachedData));
-            return; // Exit early - no need to fetch
+            return; 
         }
 
         try {
@@ -131,7 +131,7 @@ const AdminDashboard = () => {
             if (!response.ok) throw new Error('Failed to fetch activities');
 
             const data = await response.json();
-            console.log("Activities data:", data);
+            
             // data.forEach(activity => {
             //     console.log(`Activity ID: ${activity.id}`);
             //     console.log(`Timestamp value: ${activity.timestamp}`);

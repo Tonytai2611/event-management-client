@@ -1,10 +1,11 @@
 // context/AdminAuthContext.jsx
 import { createContext } from "react";
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "../config/api";
 
 export const AdminAuthContext = createContext();
 
-export const AdminAuthContextProvider = ({ children }) => {
+export const AdminAuthContextProvider= ({ children }) => {
     const [currentAdmin, setCurrentAdmin] = useState(() => {
         const saved = localStorage.getItem("admin");
         return saved ? JSON.parse(saved) : null;

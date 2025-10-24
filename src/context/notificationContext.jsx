@@ -1,168 +1,137 @@
 /* eslint-disable no-unused-vars */
-import { createContext } from "react";
-import { useState, useEffect, useCallback } from "react";
-import { useContext } from "react";
-import { AuthContext } from "./authContext.jsx";
+import { createContext, useState, useEffect, useContext } from 'react';
+import { AuthContext } from './authContext';
 import { API_BASE_URL } from '../config/api';
 
 export const NotificationContext = createContext();
 
 export const NotificationContextProvider = ({ children }) => {
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const { currentUser } = useContext(AuthContext);
 
-    const { currentUser } = useContext(AuthContext);
-    const [notifications, setNotifications] = useState([]);
-    const [newCount, setNewCount] = useState(0);
-
-    const fetchNotifications = async () => {
-        clearNotifications(); // Clear notifications before fetching new ones to prevent memory leaks
-        try {
-            const response = await fetch(`${API_BASE_URL}/notifications`, {
-                method: 'GET',
-                credentials: 'include', // Important for cookies
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch notifications');
-            }
-
-            const data = await response.json();
-            setNotifications(data);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    };
-
-    const fetchNewCount = useCallback(async () => {
-        try {
-            // Use a user-specific key for the timestamp
-            const userSpecificKey = currentUser?._id ? `userNotificationsTimestamp_${currentUser._id}` : null;
-            const lastVisitTimestamp = userSpecificKey ? localStorage.getItem(userSpecificKey) || '0' : '0';
-
-            console.log("Last visit timestamp:", lastVisitTimestamp);
-            console.log("As date:", new Date(parseInt(lastVisitTimestamp)).toLocaleString());
-            console.log("Current time:", new Date().toLocaleString());
-
-            const response = await fetch(`${API_BASE_URL}/notifications/new?since=${lastVisitTimestamp}`, {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if (!response.ok) return;
-
-            const data = await response.json();
-            console.log("New notifications count:", data.count);
-            setNewCount(data.count);
-        } catch (error) {
-            console.error("Error fetching new notification count:", error);
-        }
-    }, [currentUser]); // Add currentUser as a dependency
-
-    // Mark all as seen (when visiting notifications page)
-    const markAllAsSeen = useCallback(() => {
-        // Update the last visit timestamp with user-specific key
-        if (currentUser?._id) {
-            localStorage.setItem(`userNotificationsTimestamp_${currentUser._id}`, Date.now().toString());
-        }
-        // Reset new count
-        setNewCount(0);
-    }, [currentUser]); // Add currentUser as a dependency
-
-
-    const sendNotification = async (notification) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/notifications`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include', // Important for cookies
-                body: JSON.stringify(notification)
-            });
-            if (!response.ok) {
-                throw new Error('Failed to send notification');
-            }
-            const data = await response.json();
-            setNotifications((prev) => [...prev, data]);
-            console.log('Notification sent successfully:', data);
-        } catch (error) {
-            console.error('Error sending notification:', error);
-        }
+  const fetchNotifications = async () => {
+    if (!currentUser) {
+      console.log('⏭️ Skipping notification fetch - no user logged in');
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
     }
 
-    const markAsRead = async (notificationId) => {
-        try {
+    try {
+      const lastVisit = localStorage.getItem('lastVisit') || 0;
+      
+      const response = await fetch(
+        `${API_BASE_URL}/notifications/new?since=${lastVisit}`,
+        { credentials: 'include' }
+      );
 
-            const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
-                method: 'PATCH',
-                credentials: 'include', // Important for cookies
-            });
-            if (!response.ok) {
-                throw new Error('Failed to mark notification as read');
-            }
-            setNotifications((prev) => prev.map(notification => notification._id === notificationId ? { ...notification, isRead: true } : notification));
+      if (response.status === 401) {
+        console.log('⏭️ User not authenticated, skipping notifications');
+        setNotifications([]);
+        setUnreadCount(0);
+        return;
+      }
 
-            console.log('Notification marked as read successfully:', notificationId);
-        } catch (error) {
-            console.error('Error marking notification as read:', error);
-        }
-    };
+      if (!response.ok) {
+        throw new Error(`Failed to fetch notifications: ${response.status}`);
+      }
 
-    const deleteNotification = async (notificationId) => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
-                method: 'DELETE',
-                credentials: 'include', // Important for cookies
-            });
-            if (!response.ok) {
-                throw new Error('Failed to delete notification');
-            }
-            setNotifications((prev) => prev.filter(notification => notification._id !== notificationId));
-
-            console.log('Notification deleted successfully:', notificationId);
-        } catch (error) {
-            console.error('Error deleting notification:', error);
-        }
+      const data = await response.json();
+      console.log('📬 New notifications count:', data.unreadCount || 0);
+      
+      setNotifications(data.notifications || []);
+      setUnreadCount(data.unreadCount || 0);
+      
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+      setNotifications([]);
+      setUnreadCount(0);
     }
+  };
 
+  const markAsRead = async (notificationId) => {
+    if (!currentUser) return;
 
-    const clearNotifications = () => {
-        setNotifications([]); // Clear all notifications from the state
-        console.log('All notifications cleared');
-    };
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
+        method: 'POST',
+        credentials: 'include'
+      });
 
-    useEffect(() => {
-        fetchNewCount();
+      if (response.status === 401) {
+        console.log('⏭️ User not authenticated');
+        return;
+      }
 
-        // Add page visibility change listener
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                // When tab becomes visible, check for new notifications
-                fetchNewCount();
-            }
-        };
+      if (response.ok) {
+        setNotifications(prev =>
+          prev.map(notif =>
+            notif._id === notificationId ? { ...notif, read: true } : notif
+          )
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+      
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
 
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+  const clearAll = async () => {
+    if (!currentUser) return;
 
-        // Poll for new notifications periodically
-        const intervalId = setInterval(fetchNewCount, 10000); // Check every 10 seconds
+    try {
+      const response = await fetch(`${API_BASE_URL}/notifications/clear`, {
+        method: 'POST',
+        credentials: 'include'
+      });
 
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            clearInterval(intervalId);
-        };
-    }, [fetchNewCount]);
+      if (response.status === 401) {
+        console.log('⏭️ User not authenticated');
+        return;
+      }
 
-    useEffect(() => {
-        if (currentUser && currentUser._id) {
-            fetchNotifications();
-        } else {
-            clearNotifications(); // Clear notifications if no user is logged in
-        }
-    }, [currentUser]);
+      if (response.ok) {
+        console.log('🧹 All notifications cleared');
+        setNotifications([]);
+        setUnreadCount(0);
+        localStorage.setItem('lastVisit', Date.now());
+      }
+      
+    } catch (error) {
+      console.error('Error clearing notifications:', error);
+    }
+  };
 
-    return (
-        <NotificationContext.Provider value={{ newCount, fetchNewCount, markAllAsSeen, notifications, sendNotification, markAsRead, deleteNotification, clearNotifications }}>
-            {children}
-        </NotificationContext.Provider>
-    );
-}
+  useEffect(() => {
+    if (currentUser) {
+      console.log('✅ User logged in, fetching notifications');
+      fetchNotifications();
+      
+      const interval = setInterval(fetchNotifications, 30000);
+      return () => {
+        console.log('🧹 Cleaning up notification polling');
+        clearInterval(interval);
+      };
+    } else {
+      console.log('👋 User logged out, clearing notifications');
+      setNotifications([]);
+      setUnreadCount(0);
+    }
+  }, [currentUser]);
+
+  return (
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        unreadCount,
+        fetchNotifications,
+        markAsRead,
+        clearAll
+      }}
+    >
+      {children}
+    </NotificationContext.Provider>
+  );
+};

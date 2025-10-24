@@ -1,61 +1,92 @@
-import { createContext } from "react";
-import { useState, useEffect } from "react";
+import { createContext, useState, useEffect } from 'react';
 import { API_BASE_URL } from '../config/api';
 
 export const AuthContext = createContext();
 
+// FIX: Export đúng tên
 export const AuthContextProvider = ({ children }) => {
-    const [currentUser, setCurrentUser] = useState(() => {
-        const saved = localStorage.getItem("user");
-        return saved ? JSON.parse(saved) : null;
-    });
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const updateUser = (data) => {
-        setCurrentUser(data);
-    }
-    
-    const updateAvatar = async (avatarUrl) => {
-        try {
-            if (currentUser) {
-                // Update in local state first for immediate UI update
-                setCurrentUser({
-                    ...currentUser,
-                    avatar: avatarUrl
-                });
-                
-                // Then update in the database
-                const response = await fetch(`${API_BASE_URL}/users/${currentUser._id}/avatar`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include', // Important for cookies
-                    body: JSON.stringify({ avatarUrl })
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('Failed to update avatar in database:', errorData.message);
-                    // You might want to handle this error or show a notification to the user
-                }
-            }
-        } catch (error) {
-            console.error('Error updating avatar:', error);
-        }
-    }
-    
-    useEffect(() => {
-        // Only save to localStorage if user is not null
-        if (currentUser === null) {
-            localStorage.removeItem("user");
-        } else {
-            localStorage.setItem("user", JSON.stringify(currentUser));
-        }
-    }, [currentUser]);
+  const login = async (username, password) => {
+    try {
+      console.log('🔑 Login - API_BASE_URL:', API_BASE_URL);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ username, password })
+      });
 
-    return (
-        <AuthContext.Provider value = {{currentUser, updateUser, updateAvatar}}>
-            {children}
-        </AuthContext.Provider>
-    );
-}
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Login failed with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Login successful:', data);
+      
+      setCurrentUser(data.user);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      return data;
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      console.log('🚪 Logging out...');
+      
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      setCurrentUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('lastVisit');
+      
+      console.log('✅ Logout successful');
+    } catch (error) {
+      console.error('❌ Logout error:', error);
+      setCurrentUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('lastVisit');
+    }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setCurrentUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ 
+      currentUser, 
+      setCurrentUser,
+      login,
+      logout,
+      loading 
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

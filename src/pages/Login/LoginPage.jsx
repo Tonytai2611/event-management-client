@@ -39,7 +39,7 @@ const LoginPage = () => {
         setError(null);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/login`, {
+            const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -84,7 +84,7 @@ const LoginPage = () => {
         setError(null);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/login`, {
+            const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
