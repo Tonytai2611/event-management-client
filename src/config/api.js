@@ -2,11 +2,11 @@ const isDevelopment = import.meta.env.MODE === 'development';
 
 export const API_BASE_URL = isDevelopment 
   ? 'http://localhost:8800'  
-  : import.meta.env.VITE_API_BASE_URL || 'http://52.77.247.43';
+  : import.meta.env.VITE_API_BASE_URL || 'http://18.143.73.181/api';
 
 export const CLIENT_URL = isDevelopment
   ? 'http://localhost:5173'
-  : import.meta.env.VITE_CLIENT_URL || 'http://52.77.247.43';
+  : import.meta.env.VITE_CLIENT_URL || 'http://18.143.73.18';
 
 // Debug logging
 console.log('🔧 Environment:', import.meta.env.MODE);
