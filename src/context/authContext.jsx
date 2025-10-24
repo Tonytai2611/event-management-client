@@ -3,7 +3,6 @@ import { API_BASE_URL } from '../config/api';
 
 export const AuthContext = createContext();
 
-// FIX: Export đúng tên
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,6 +60,23 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (userData) => {
+    setCurrentUser(userData);
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+      localStorage.removeItem('user');
+    }
+  };
+
+  const updateAvatar = (avatarUrl) => {
+    if (currentUser) {
+      const updatedUser = { ...currentUser, avatar: avatarUrl };
+      setCurrentUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -84,6 +100,8 @@ export const AuthContextProvider = ({ children }) => {
       setCurrentUser,
       login,
       logout,
+      updateUser,
+      updateAvatar,
       loading 
     }}>
       {children}

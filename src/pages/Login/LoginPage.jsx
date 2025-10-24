@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/authContext.jsx';
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/authContext';
 import { AdminAuthContext } from '../../context/adminAuthContext';
-import { useContext } from 'react';
-import { API_BASE_URL } from '../../config/api';
 
 const LoginPage = () => {
     const navigate = useNavigate();
-    const { updateUser } = useContext(AuthContext);
-    const { updateAdmin } = useContext(AdminAuthContext);
+    
+    // FIX: Use login and adminLogin from contexts
+    const { login } = useContext(AuthContext);
+    const { adminLogin } = useContext(AdminAuthContext);
+    
     const [isLoading, setIsLoading] = useState(false);
     const [isAdminLoading, setIsAdminLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -25,7 +25,6 @@ const LoginPage = () => {
             ...prev,
             [name]: value
         }));
-        // Clear error when user starts typing
         if (error) setError(null);
     };
 
@@ -39,40 +38,17 @@ const LoginPage = () => {
         setError(null);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: formData.username,
-                    password: formData.password
-                }),
-                credentials: 'include'
-            });
-
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error(`Login failed with status: ${res.status}`);
-            }
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.message || `Login failed with status: ${res.status}`);
-            }
-
-            if (!data.user) {
-                throw new Error('No user data in response');
-            }
-
-            updateUser(data.user);
-            console.log('Login successful:', data);
+            console.log('🔑 User login attempt...');
+            
+            // Use login function from AuthContext
+            await login(formData.username, formData.password);
+            
+            console.log('✅ Login successful, redirecting...');
             navigate('/home');
 
         } catch (err) {
-            console.error('Login error:', err);
-            setError(err.message || 'Something went wrong. Please try again.');
+            console.error('❌ Login error:', err);
+            setError(err.message || 'Login failed. Please check your credentials.');
         } finally {
             setIsLoading(false);
         }
@@ -84,39 +60,16 @@ const LoginPage = () => {
         setError(null);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/admin/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: formData.username,
-                    password: formData.password
-                }),
-                credentials: 'include'
-            });
-
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error(`Server returned ${res.status}: Expected JSON but got ${contentType || 'unknown content type'}`);
-            }
-
-            const data = await res.json();  
-
-            if (!res.ok) {
-                throw new Error(data.message || `Admin login failed with status: ${res.status}`);
-            }
-
-            if (!data.user) {
-                throw new Error('No admin data in response');
-            }
-
-            updateAdmin(data.user);
-            console.log('Admin login successful:', data);
+            console.log('🔑 Admin login attempt...');
+            
+            // Use adminLogin function from AdminAuthContext
+            await adminLogin(formData.username, formData.password);
+            
+            console.log('✅ Admin login successful, redirecting...');
             navigate('/admin/dashboard');
 
         } catch (err) {
-            console.error('Admin login error:', err);
+            console.error('❌ Admin login error:', err);
             setError(err.message || 'Admin login failed. Please verify your credentials.');
         } finally {
             setIsAdminLoading(false);
