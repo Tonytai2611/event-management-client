@@ -19,7 +19,7 @@ const Comments = ({ eventId }) => {
     const fetchComments = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`${API_BASE_URL}/api/comments/event/${eventId}`);
+            const response = await fetch(`${API_BASE_URL}/comments/event/${eventId}`);
             const data = await response.json();
             
             if (data.success) {
@@ -38,7 +38,7 @@ const Comments = ({ eventId }) => {
         if (!newComment.trim()) return;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/event/${eventId}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/event/${eventId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const Comments = ({ eventId }) => {
         if (!replyText.trim()) return;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/event/${eventId}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/event/${eventId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const Comments = ({ eventId }) => {
         if (!editText.trim()) return;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/${commentId}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ const Comments = ({ eventId }) => {
         if (!window.confirm('Are you sure you want to delete this comment?')) return;
         
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/${commentId}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/${commentId}`, {
                 method: 'DELETE',
                 credentials: 'include',
             });

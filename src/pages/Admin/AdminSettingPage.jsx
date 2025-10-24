@@ -22,7 +22,7 @@ const AdminSettingPage = () => {
         const fetchSettings = async () => {
             try {
                 setIsLoading(true);
-                const res = await fetch(`${API_BASE_URL}/api/settings/`);
+                const res = await fetch(`${API_BASE_URL}/settings/`);
                 const data = await res.json();
                 setEventSettings(data.eventSettings);
                 setIsLoading(false);
@@ -68,7 +68,7 @@ const AdminSettingPage = () => {
         
         try {
             setIsSaving(true);
-            const res = await fetch(`${API_BASE_URL}/api/settings/`, {
+            const res = await fetch(`${API_BASE_URL}/settings/`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(eventSettings),

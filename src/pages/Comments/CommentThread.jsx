@@ -85,7 +85,7 @@ const CommentThread = ({ comment, eventId, onReply, currentUser, depth = 0, onUp
 
         setIsUpdating(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/${comment._id}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/${comment._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ const CommentThread = ({ comment, eventId, onReply, currentUser, depth = 0, onUp
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/api/comments/${comment._id}`, {
+            const response = await fetch(`${API_BASE_URL}/comments/${comment._id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });

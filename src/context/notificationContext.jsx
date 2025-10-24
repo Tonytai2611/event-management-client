@@ -16,7 +16,7 @@ export const NotificationContextProvider = ({ children }) => {
     const fetchNotifications = async () => {
         clearNotifications(); // Clear notifications before fetching new ones to prevent memory leaks
         try {
-            const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+            const response = await fetch(`${API_BASE_URL}/notifications`, {
                 method: 'GET',
                 credentials: 'include', // Important for cookies
             });
@@ -41,7 +41,7 @@ export const NotificationContextProvider = ({ children }) => {
             console.log("As date:", new Date(parseInt(lastVisitTimestamp)).toLocaleString());
             console.log("Current time:", new Date().toLocaleString());
 
-            const response = await fetch(`${API_BASE_URL}/api/notifications/new?since=${lastVisitTimestamp}`, {
+            const response = await fetch(`${API_BASE_URL}/notifications/new?since=${lastVisitTimestamp}`, {
                 method: 'GET',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' }
@@ -70,7 +70,7 @@ export const NotificationContextProvider = ({ children }) => {
 
     const sendNotification = async (notification) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+            const response = await fetch(`${API_BASE_URL}/notifications`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ export const NotificationContextProvider = ({ children }) => {
     const markAsRead = async (notificationId) => {
         try {
 
-            const response = await fetch(`${API_BASE_URL}/api/notifications/${notificationId}/read`, {
+            const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
                 method: 'PATCH',
                 credentials: 'include', // Important for cookies
             });
@@ -109,7 +109,7 @@ export const NotificationContextProvider = ({ children }) => {
 
     const deleteNotification = async (notificationId) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/notifications/${notificationId}`, {
+            const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
                 method: 'DELETE',
                 credentials: 'include', // Important for cookies
             });

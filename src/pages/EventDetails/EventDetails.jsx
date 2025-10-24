@@ -88,7 +88,7 @@ const EventDetails = () => {
 
   const fetchInvitationsAndStats = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/invitations-get?eventId=${id}`);
+      const response = await fetch(`${API_BASE_URL}/events/invitations-get?eventId=${id}`);
       const data = await response.json();
       if (!response.ok) {
         alert(data.error || 'Failed to fetch invitations');
@@ -118,7 +118,7 @@ const EventDetails = () => {
 
   const fetchRequests = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${id}/requests-get`);
+      const response = await fetch(`${API_BASE_URL}/events/${id}/requests-get`);
       const data = await response.json();
       if (!response.ok) {
         alert(data.error || 'Failed to fetch requests');
@@ -163,7 +163,7 @@ const EventDetails = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${id}/reminders/pending-invites`, {
+      const response = await fetch(`${API_BASE_URL}/events/${id}/reminders/pending-invites`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -193,7 +193,7 @@ const EventDetails = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${id}/reminders/attendees`, {
+      const response = await fetch(`${API_BASE_URL}/events/${id}/reminders/attendees`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -224,7 +224,7 @@ const EventDetails = () => {
 
     setIsInviting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${id}/invite`, {
+      const response = await fetch(`${API_BASE_URL}/events/${id}/invite`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -263,7 +263,7 @@ const EventDetails = () => {
       return;
     }
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${id}/request-join`, {
+      const response = await fetch(`${API_BASE_URL}/events/${id}/request-join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -300,7 +300,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/users`, {
+        const response = await fetch(`${API_BASE_URL}/users`, {
           credentials: 'include'
         });
 

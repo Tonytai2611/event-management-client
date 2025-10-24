@@ -101,7 +101,7 @@ const CreateEvent = () => {
       }
       fd.append('organizer', currentUser._id);
 
-      const response = await fetch(`${API_BASE_URL}/api/events`, {
+      const response = await fetch(`${API_BASE_URL}/events`, {
         method: 'POST',
         credentials: 'include',
         body: fd,

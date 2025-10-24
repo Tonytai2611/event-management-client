@@ -99,7 +99,7 @@ const NotificationPage = () => {
 
         try {
             // Fetch fresh data
-            const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+            const response = await fetch(`${API_BASE_URL}/notifications`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
@@ -221,7 +221,7 @@ const NotificationPage = () => {
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/api/events/${eventId}/invitations/${invitationId}`,
+                `${API_BASE_URL}/events/${eventId}/invitations/${invitationId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -284,7 +284,7 @@ const NotificationPage = () => {
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/api/events/${eventId}/invitations/${invitationId}`,
+                `${API_BASE_URL}/events/${eventId}/invitations/${invitationId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -342,7 +342,7 @@ const NotificationPage = () => {
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/api/events/${eventId}/requests/${requestId}`,
+                `${API_BASE_URL}/events/${eventId}/requests/${requestId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -400,7 +400,7 @@ const NotificationPage = () => {
 
         try {
             const response = await fetch(
-                `${API_BASE_URL}/api/events/${eventId}/requests/${requestId}`,
+                `${API_BASE_URL}/events/${eventId}/requests/${requestId}`,
                 {
                     method: "PUT",
                     headers: {

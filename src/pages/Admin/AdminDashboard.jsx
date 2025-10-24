@@ -68,13 +68,13 @@ const AdminDashboard = () => {
 
         try {
             // Fetch fresh data
-            const users = await fetch(`${API_BASE_URL}/api/users`, {
+            const users = await fetch(`${API_BASE_URL}/users`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
             });
 
-            const events = await fetch(`${API_BASE_URL}/api/events`, {
+            const events = await fetch(`${API_BASE_URL}/events`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include'
@@ -124,7 +124,7 @@ const AdminDashboard = () => {
 
     const fetchActivities = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/admin/activities`, {
+            const response = await fetch(`${API_BASE_URL}/admin/activities`, {
                 credentials: 'include'
             });
 

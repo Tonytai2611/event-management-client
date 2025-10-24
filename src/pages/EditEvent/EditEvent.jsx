@@ -34,7 +34,7 @@ const EditEvent = () => {
     useEffect(() => {
         const fetchEventData = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+                const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
                     credentials: 'include',
                 });
 
@@ -159,7 +159,7 @@ const EditEvent = () => {
                 }
                 fd.append('organizer', currentUser._id);
 
-                const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+                const response = await fetch(`${API_BASE_URL}/events/${eventId}`, {
                     method: 'PUT',
                     credentials: 'include',
                     body: fd,

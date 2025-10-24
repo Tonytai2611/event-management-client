@@ -24,7 +24,7 @@ const Calendar = () => {
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/events?organizerId=${currentUser._id}&participantId=${currentUser._id}`, {
+        const response = await fetch(`${API_BASE_URL}/events?organizerId=${currentUser._id}&participantId=${currentUser._id}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include'

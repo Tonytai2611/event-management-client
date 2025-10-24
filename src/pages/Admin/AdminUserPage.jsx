@@ -48,7 +48,7 @@ const AdminUserPage = () => {
         const fetchUsers = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch(`${API_BASE_URL}/api/users`, {
+                const response = await fetch(`${API_BASE_URL}/users`, {
                     credentials: 'include'
                 });
                 

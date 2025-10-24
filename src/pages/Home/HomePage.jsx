@@ -54,7 +54,7 @@ const HomePage = () => {
     setLoading(true);
     try {
       // Fetch fresh data
-      const response = await fetch(`${API_BASE_URL}/api/events?public=true`, {
+      const response = await fetch(`${API_BASE_URL}/events?public=true`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'

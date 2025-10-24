@@ -24,7 +24,7 @@ export const AuthContextProvider = ({ children }) => {
                 });
                 
                 // Then update in the database
-                const response = await fetch(`${API_BASE_URL}/api/users/${currentUser._id}/avatar`, {
+                const response = await fetch(`${API_BASE_URL}/users/${currentUser._id}/avatar`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'

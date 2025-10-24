@@ -9,7 +9,7 @@ export const singleEventLoader = async ({ params }) => {
     try {
         const eventId = params.id;
 
-        const eventResponse = await fetch(`${API_BASE_URL}/api/events/${eventId}`,{
+        const eventResponse = await fetch(`${API_BASE_URL}/events/${eventId}`,{
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include' // This is critical for sending cookies/session
@@ -27,8 +27,8 @@ export const singleEventLoader = async ({ params }) => {
         if (eventData && !eventData.publicity) {
             try {
                 const [invitationsRes, requestsRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/api/events/invitations-get?eventId=${eventId}`, { credentials: 'include' }),
-                    fetch(`${API_BASE_URL}/api/events/${eventId}/requests-get`, { credentials: 'include' })
+                    fetch(`${API_BASE_URL}/events/invitations-get?eventId=${eventId}`, { credentials: 'include' }),
+                    fetch(`${API_BASE_URL}/events/${eventId}/requests-get`, { credentials: 'include' })
                 ]);
 
                 if (invitationsRes.ok) {

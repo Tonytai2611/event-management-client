@@ -14,7 +14,7 @@ const EventCard = ({ title, image, startDate, startTime, endTime, location, summ
     }
     
     try {
-      const response = await fetch(`${API_BASE_URL}/api/events/${_id}/request-join`, {
+      const response = await fetch(`${API_BASE_URL}/events/${_id}/request-join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
