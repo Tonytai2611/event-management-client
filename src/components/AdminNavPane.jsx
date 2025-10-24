@@ -43,7 +43,7 @@
         const handleLogout = async () => {
             try {
                 // Call the backend API to log out
-                await fetch('/api/admin/logout', {
+                await fetch('/admin/logout', {
                     method: 'POST',
                     credentials: 'include', // Include cookies for authentication
                 });
