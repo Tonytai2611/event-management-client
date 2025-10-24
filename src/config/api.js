@@ -2,11 +2,11 @@ const isDevelopment = import.meta.env.MODE === 'development';
 
 export const API_BASE_URL = isDevelopment 
   ? 'http://localhost:8800'  
-  : import.meta.env.VITE_API_BASE_URL || 'http://18.143.73.181/api';
+  : 'http://54.169.211.105/api';
 
 export const CLIENT_URL = isDevelopment
   ? 'http://localhost:5173'
-  : import.meta.env.VITE_CLIENT_URL || 'http://18.143.73.181';
+  :  'http://54.169.211.105';
 
 // Debug logging
 console.log('🔧 Environment:', import.meta.env.MODE);
@@ -15,7 +15,6 @@ console.log('🌐 Client URL:', CLIENT_URL);
 
 export const testAPIConnection = async () => {
     try {
-        // Remove /api/ since it's already in API_BASE_URL
         const response = await fetch(`${API_BASE_URL}/test`, {  
             method: 'GET',
             headers: {
