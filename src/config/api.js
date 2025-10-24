@@ -2,7 +2,7 @@ const isDevelopment = import.meta.env.MODE === 'development';
 
 export const API_BASE_URL = isDevelopment 
   ? 'http://localhost:8800'  
-  : 'http://54.169.211.105/api';
+  : 'http://54.169.211.105:8800';
 
 export const CLIENT_URL = isDevelopment
   ? 'http://localhost:5173'
