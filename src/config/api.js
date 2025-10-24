@@ -1,8 +1,8 @@
-const isDevelopment = import.meta.env.MODE === 'development';
+const isDevelopment = import.meta.env.MODE === 'production';
 
 export const API_BASE_URL = isDevelopment 
   ? 'http://localhost:8800'  
-  : import.meta.env.VITE_API_BASE_URL || 'http://18.143.73.181/api';
+  : import.meta.env.VITE_API_BASE_URL || 'http://18.143.73.181:8800/api';
 
 export const CLIENT_URL = isDevelopment
   ? 'http://localhost:5173'
@@ -13,7 +13,6 @@ console.log('🔧 Environment:', import.meta.env.MODE);
 console.log('📡 API Base URL:', API_BASE_URL);
 console.log('🌐 Client URL:', CLIENT_URL);
 
-// Test connection function - FIX: Remove /api prefix
 export const testAPIConnection = async () => {
     try {
         // Remove /api/ since it's already in API_BASE_URL
