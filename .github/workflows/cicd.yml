@@ -32,8 +32,6 @@ jobs:
         run: |
           docker stop event-management-client-container 2>/dev/null || true
           docker rm event-management-client-container 2>/dev/null || true
-          
-          # Dừng bất kỳ process nào đang dùng port 80 (trừ API)
           sudo fuser -k 80/tcp 2>/dev/null || true
         
       - name: Run Docker Container
