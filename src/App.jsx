@@ -25,16 +25,16 @@ import { AuthContext } from './context/authContext.jsx';
 
 
 function App() {
-  const { fetchNewCount } = useContext(NotificationContext);
+  const { fetchNotifications } = useContext(NotificationContext);
   const { currentUser } = useContext(AuthContext);
 
   // Fetch notifications when the app loads and user is logged in
   useEffect(() => {
     if (currentUser) {
       console.log("App initialized with user, checking for notifications");
-      fetchNewCount();
+      fetchNotifications();
     }
-  }, [currentUser, fetchNewCount]);
+  }, [currentUser]);
   const router = createBrowserRouter([
     {
       path: "/",
