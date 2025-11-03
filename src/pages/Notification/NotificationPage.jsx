@@ -11,7 +11,7 @@ const NotificationPage = () => {
     const navigate = useNavigate();
     const { notificationId } = useParams();
     // State to keep track of selected notification/event
-    const { markAsRead, deleteNotification, markAllAsSeen } = useContext(NotificationContext);
+    const { markAsRead} = useContext(NotificationContext);
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [selectedNotification, setSelectedNotification] = useState(null);
     const [selectedNotificationId, setSelectedNotificationId] = useState(null);
@@ -170,7 +170,7 @@ const NotificationPage = () => {
             .some((nav) => nav.type === 'reload');
 
         fetchNotifications(isReload); // Force refresh if the page was reloaded
-        markAllAsSeen();
+
     }, []);
 
     // Handle notification click

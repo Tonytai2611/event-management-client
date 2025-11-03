@@ -23,167 +23,168 @@ import AdminRoute from './routes/AdminRoute.jsx';
 import { NotificationContext } from './context/notificationContext.jsx';
 import { AuthContext } from './context/authContext.jsx';
 
+// Move router OUTSIDE component
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LandingPage />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+    errorElement: <ErrorPage />
+  },
+  {
+    path: "/admin/dashboard",
+    element:
+      <AdminRoute>
+        <AdminDashboard />
+      </AdminRoute>,
+    errorElement: <AdminErrorPage />
+  },
+  {
+    path: "/admin/userpage",
+    element:
+      <AdminRoute>
+        <AdminUserPage />
+      </AdminRoute>,
+    errorElement: <AdminErrorPage />
+  },
+  {
+    path: "/admin/events",
+    element:
+      <AdminRoute>
+        <AdminEventsPage />
+      </AdminRoute>,
+    errorElement: <AdminErrorPage />,
+  },
+  {
+    path: "/admin/setting",
+    element:
+      <AdminRoute>
+        <AdminSettingPage />
+      </AdminRoute>,
+    errorElement: <AdminErrorPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignUpPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/verify-email",
+    element: <EmailVerificationPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/home",
+    element:
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "event/:id",
+        element: <EventDetails />,
+        errorElement: <ErrorPage />,
+        loader: singleEventLoader
+      }
+    ]
+  },
+  {
+    path: "/calendar",
+    element:
+      <ProtectedRoute>
+        <Calendar />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "event/:id",
+        element: <EventDetails />,
+        errorElement: <ErrorPage />,
+        loader: singleEventLoader
+      }
+    ]
+  },
+  {
+    path: "/event/:id",
+    element:
+      <ProtectedRoute>
+        <EventDetails />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+    loader: singleEventLoader
+  },
+  {
+    path: "/event/:id/edit",
+    element:
+      <ProtectedRoute>
+        <EditEvent />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+    loader: singleEventLoader
+  },
+  {
+    path: "/profile",
+    element:
+      <ProtectedRoute>
+        <Profile />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "event/:id",
+        element: <EventDetails />,
+        errorElement: <ErrorPage />,
+        loader: singleEventLoader
+      }
+    ]
+  },
+  {
+    path: "/create-event",
+    element:
+      <ProtectedRoute>
+        <CreateEvent />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/notifications",
+    element:
+      <ProtectedRoute>
+        <NotificationPage />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/notifications/:notificationId",
+    element:
+      <ProtectedRoute>
+        <NotificationPage />
+      </ProtectedRoute>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/email-verification",
+    element: <EmailVerificationPage />,
+    errorElement: <ErrorPage />,
+  },
+]);
 
 function App() {
   const { fetchNotifications } = useContext(NotificationContext);
   const { currentUser } = useContext(AuthContext);
 
-  // Fetch notifications when the app loads and user is logged in
   useEffect(() => {
     if (currentUser) {
       console.log("App initialized with user, checking for notifications");
       fetchNotifications();
     }
   }, [currentUser]);
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <LandingPage />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: "/login",
-      element: <LoginPage />,
-      errorElement: <ErrorPage />
-    },
-    {
-      path: "/admin/dashboard",
-      element:
-        <AdminRoute>
-          <AdminDashboard />
-        </AdminRoute>,
-      errorElement: <AdminErrorPage />
-    },
-    {
-      path: "admin/userpage",
-      element:
-        <AdminRoute>
-          <AdminUserPage />
-        </AdminRoute>,
-      errorElement: <AdminErrorPage />
-    },
-    {
-      path: "/admin/events",
-      element:
-        <AdminRoute>
-          <AdminEventsPage />
-        </AdminRoute>,
-      errorElement: <AdminErrorPage />,
-    },
-    {
-      path: "/admin/setting",
-      element:
-        <AdminRoute>
-          <AdminSettingPage />
-        </AdminRoute>,
-      errorElement: <AdminErrorPage />,
-    },
-    {
-      path: "/signup",
-      element: <SignUpPage />,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: "/verify-email",
-      element: <EmailVerificationPage />,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: "/home",
-      element:
-        <ProtectedRoute>
-          <HomePage />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          path: "event/:id",
-          element: <EventDetails />,
-          errorElement: <ErrorPage />,
-          loader: singleEventLoader
-        }
-      ]
-    },
-    {
-      path: "/calendar",
-      element:
-        <ProtectedRoute>
-          <Calendar />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          path: "event/:id",
-          element: <EventDetails />,
-          errorElement: <ErrorPage />,
-          loader: singleEventLoader
-        }
-      ]
-    },
-    {
-      path: "/event/:id",
-      element:
-        <ProtectedRoute>
-          <EventDetails />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-      loader: singleEventLoader
-    },
-    {
-      path: "/event/:id/edit",
-      element:
-        <ProtectedRoute>
-          <EditEvent />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-      loader: singleEventLoader
-    },
-    {
-      path: "/profile",
-      element:
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-      children: [
-        {
-          path: "event/:id",
-          element: <EventDetails />,
-          errorElement: <ErrorPage />,
-          loader: singleEventLoader
-        }
-      ]
-    },
-    {
-      path: "/create-event",
-      element:
-        <ProtectedRoute>
-          <CreateEvent />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: "/notifications",
-      element:
-        <ProtectedRoute>
-          <NotificationPage />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: "/notifications/:notificationId",
-      element:
-        <ProtectedRoute>
-          <NotificationPage />
-        </ProtectedRoute>,
-      errorElement: <ErrorPage />,
-    },
-    {
-      path: "/email-verification",
-      element: <EmailVerificationPage />,
-      errorElement: <ErrorPage />,
-    },
-  ]);
+
   return <RouterProvider router={router} />;
 }
 

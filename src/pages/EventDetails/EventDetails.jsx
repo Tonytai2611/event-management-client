@@ -86,35 +86,36 @@ const EventDetails = () => {
     }
   }, [currentUser, eventData]);
 
-  const fetchInvitationsAndStats = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/events/invitations-get?eventId=${id}`);
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.error || 'Failed to fetch invitations');
-        throw new Error('Failed to fetch invitations');
-      }
-
-      const dataArray = data.invitations || [];
-      setInvitations(dataArray);
-      console.log("Fetched invitations:", dataArray);
-
-      const acceptedCount = dataArray.filter(inv => inv.status === 'approved').length;
-      const totalRespondedCount = dataArray.filter(inv => inv.status !== 'invited').length;
-
-      if (totalRespondedCount === 0) {
-        setRsvpRate(0);
-      } else {
-        const calculatedRate = Math.round((acceptedCount / totalRespondedCount) * 100);
-        setRsvpRate(calculatedRate);
-      }
-
-    } catch (err) {
-      console.error('Error fetching invitations:', err);
-    } finally {
-      setIsLoading(false);
+const fetchInvitationsAndStats = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/events/invitations-get?eventId=${id}`);
+    const data = await response.json();
+    if (!response.ok) {
+      alert(data.error || 'Failed to fetch invitations');
+      throw new Error('Failed to fetch invitations');
     }
-  };
+
+    const dataArray = data.invitations || [];
+    setInvitations(dataArray);
+    console.log("Fetched invitations:", dataArray);
+
+    const totalInvites = dataArray.length;
+    const totalRespondedCount = dataArray.filter(inv => inv.status !== 'invited').length;
+
+    if (totalInvites === 0) {
+      setRsvpRate(0);
+    } else {
+      // FIX: RSVP Rate = (số người đã phản hồi / tổng số lời mời) * 100
+      const calculatedRate = Math.round((totalRespondedCount / totalInvites) * 100);
+      setRsvpRate(calculatedRate);
+    }
+
+  } catch (err) {
+    console.error('Error fetching invitations:', err);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const fetchRequests = async () => {
     try {
